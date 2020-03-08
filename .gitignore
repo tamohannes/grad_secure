@@ -1,1 +1,4 @@
 cheat.txt
+config.json
+__pycache__/
+vendor/__pycache__/
