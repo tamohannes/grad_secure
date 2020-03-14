@@ -5,29 +5,39 @@ import requests
 # from log import log
 from vendor.log import log
 from vendor.config import get_config
+# from vendor.discriminator import * 
+# from vendor.discriminator.Discriminator import Gago
+# from vendor.discriminator.a import *
+import pickle
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'
 
     def do_GET(self, body=True):
-        # TODO - check if self.path is safe then request to that url
+        
+        self.load_model()
+        print("\n\n**********************************************")
+        print(self.is_malicious(self.path))
         print(self.path)
+        print("**********************************************\n\n")
 
-        url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
-
-        # add parameters to header if needed
-        # req_header = self.parse_headers()
         req_header = self.headers
 
         print(req_header)
         print("\n")
+        url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
 
         resp = requests.get(url, headers=req_header, verify=False)
         log(self, resp)
         
-        self.send_response(resp.status_code)
-        self.send_resp_headers(resp)
-        self.wfile.write(resp.content)
+        if self.is_malicious(self.path):
+            self.send_response(404)
+            self.send_resp_headers(resp)
+            self.wfile.write(resp.content)
+        else:
+            self.send_response(resp.status_code)
+            self.send_resp_headers(resp)
+            self.wfile.write(resp.content)
 
 
     def parse_headers(self):
@@ -51,11 +61,28 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-Length', len(resp.content))
         self.end_headers()
 
+    def is_malicious(self, inputs):
+        variables = inputs.split('&')
+        values = variables
+        return True if self.loaded_model['model'].predict(values).sum() > 0 else False
 
-# def get_config():
-#     with open('config.json') as json_data_file:
-#         data = json.load(json_data_file)
-#     return(data)
+    def load_model(self):
+        filename = './vendor/discriminator/finalized_model.sav'
+        self.loaded_model = pickle.load(open(filename, 'rb'))
+
+
+
+def get2Grams(payload_obj):
+    '''Divides a string into 2-grams
+    
+    Example: input - payload: "<script>"
+             output- ["<s","sc","cr","ri","ip","pt","t>"]
+    '''
+    payload = str(payload_obj)
+    ngrams = []
+    for i in range(0,len(payload)-2):
+        ngrams.append(payload[i:i+2])
+    return ngrams
 
 
 if __name__ == '__main__':
