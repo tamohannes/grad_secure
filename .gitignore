@@ -1,6 +1,5 @@
+log/log2.json
+log/log1.log
+vendor/__pycache__/
 cheat.txt
 config.json
-__pycache__/
-vendor/__pycache__/
-log/log1.log
-log/log2.json

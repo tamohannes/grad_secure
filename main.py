@@ -1,13 +1,7 @@
-# from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
-# import json
-# from log import log
 from vendor.log import log
 from vendor.config import get_config
-# from vendor.discriminator import * 
-# from vendor.discriminator.Discriminator import Gago
-# from vendor.discriminator.a import *
 import pickle
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
