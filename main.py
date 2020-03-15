@@ -21,8 +21,10 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         req_header = self.headers
 
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
-
+        
+        # print(req_header)
         resp = requests.get(url, headers=req_header, verify=False)
+        # print(resp)
         log(self, resp)
         
         if self.is_malicious(self.path):
