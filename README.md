@@ -13,8 +13,8 @@ Prerequisite:
 
 Bellow are configurations and setup for details
 
-1. Download the directory (or clone it) and unzip it anywhere you want, best possible directory can be /var/www/ai_based_waf
-2. Open ai_based_waf/config.json and set your configurarions: gradsecurity - where the WAF should be running, webapp - where your web application is running, for example 
+1. Download the directory (or clone it) and unzip it anywhere you want, best possible directory can be /var/www/grad_secure
+2. Open grad_secure/config.json and set your configurarions: gradsecurity - where the WAF should be running, webapp - where your web application is running, for example 
     {
     "gradsecurity": {
         "protocol": "http",
