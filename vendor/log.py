@@ -1,7 +1,7 @@
 import logging
 import json
 
-def log(req, resp):
+def log(req=None, resp=None):
 
     data = {'req':{},'resp':{}}
 
@@ -11,11 +11,11 @@ def log(req, resp):
     data['req']['client_address'] = req.client_address
     data['req']['path'] = req.path
 
-    for resp_param in resp.headers:
-        data['resp'][resp_param] = resp.headers[resp_param]
-    
-    data['resp']['status_code'] = resp.status_code
-    
+    if resp:
+        for resp_param in resp.headers:
+            data['resp'][resp_param] = resp.headers[resp_param]
+        
+        data['resp']['status_code'] = resp.status_code
 
     with open("./log/log2.json", "a") as write_file:
         json.dump(data, write_file)

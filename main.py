@@ -3,6 +3,9 @@ import requests
 from vendor.log import log
 from vendor.config import get_config
 import pickle
+import pandas as pd
+import random
+import cgi
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'
@@ -10,29 +13,53 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self, body=True):
         
         self.load_model()
-        print("\n\n**********************************************")
-        print(self.is_malicious(self.path))
-        print(self.path)
-        print("**********************************************\n\n")
+
+        # print("\n\n**********************************************")
+        # print(self.is_malicious(self.path))
+        # print("**********************************************\n\n")
 
         req_header = self.headers
 
-        print(req_header)
-        print("\n")
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
 
         resp = requests.get(url, headers=req_header, verify=False)
         log(self, resp)
         
         if self.is_malicious(self.path):
-            self.send_response(404)
-            self.send_resp_headers(resp)
-            self.wfile.write(resp.content)
+            self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
             self.send_response(resp.status_code)
             self.send_resp_headers(resp)
             self.wfile.write(resp.content)
 
+    def do_POST(self, body=True):
+        
+        self.load_model()
+
+        content_length = int(self.headers['Content-Length'])
+        content = self.rfile.read(content_length)
+        
+        content_dict, is_malicious = self.parse_content(content)
+
+
+        # print("\n\n**********************************************")
+        # print(is_malicious)
+        # print("**********************************************\n\n")
+
+        req_header = self.headers
+
+        url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
+
+        resp = requests.post(url, data=content_dict, headers=req_header, verify=False)
+        
+        log(self)
+
+        if is_malicious:        
+            self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+        else:
+            self.send_response(resp.status_code)
+            self.send_resp_headers(resp)
+            self.wfile.write(resp.content)
 
     def parse_headers(self):
         req_header = {}
@@ -50,9 +77,12 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def send_resp_headers(self, resp):
         resp_header = resp.headers
         for key in resp_header:
-            if key not in ['Content-Encoding', 'Transfer-Encoding', 'content-encoding', 'transfer-encoding', 'content-length', 'Content-Length']:
+            if key not in ['Server','Content-Encoding', 'Transfer-Encoding', 'content-encoding', 'transfer-encoding', 'content-length', 'Content-Length']:
+                print(resp_header[key])
                 self.send_header(key, resp_header[key])
         self.send_header('Content-Length', len(resp.content))
+        # self.send_header('Server',resp.headers["Server"])
+
         self.end_headers()
 
     def is_malicious(self, inputs):
@@ -64,14 +94,44 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         filename = './vendor/discriminator/finalized_model.sav'
         self.loaded_model = pickle.load(open(filename, 'rb'))
 
+    def type_of_attack(self, input):
+        sql_keywords = pd.read_csv('./vendor/discriminator/data/SQLKeywords.txt', index_col=False)
+        js_keywords = pd.read_csv('./vendor/discriminator/data/JavascriptKeywords.txt', index_col=False)
+        
+        sql_keyword = 0
+        js_keyword = 0
 
+        for keyword in sql_keywords['Keyword']:
+            res =  str(input).lower().find(str(keyword).lower())
+            if res >= 0:
+                sql_keyword +=1
+
+        for keyword in js_keywords['Keyword']:
+            res =  str(input).lower().find(str(keyword).lower())
+            if res >= 0:
+                js_keyword +=1
+
+        return "SQL" if sql_keyword > js_keyword else "XSS"
+
+    def make_fun(self):
+        responses = ["Oh really? Come on", "You must be kidding", "Cant touch this", "Ok you are not playing well", "Is that all you can ?", "Woh, I though you can do better", "That doesnt seem to be cool", "Try harded", "Lets try again, has asenq angleren chgiten sranq", "I am disapointed"]
+        return random.choice(responses)
+
+    def parse_content(self, content):
+        content = content.decode("utf-8")
+        content = content.split("&")
+        is_malicious = False
+        pair_dic = {}
+        for pair in content:
+            spl = pair.split("=")
+            if not (self.is_malicious(spl[0]) or self.is_malicious(spl[1])):
+                pair_dic[spl[0]] = spl[1]
+            else:
+                is_malicious = True
+                break
+        return pair_dic, is_malicious
 
 def get2Grams(payload_obj):
-    '''Divides a string into 2-grams
-    
-    Example: input - payload: "<script>"
-             output- ["<s","sc","cr","ri","ip","pt","t>"]
-    '''
     payload = str(payload_obj)
     ngrams = []
     for i in range(0,len(payload)-2):
