@@ -5,7 +5,6 @@ from vendor.config import get_config
 import pickle
 import pandas as pd
 import random
-import cgi
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'

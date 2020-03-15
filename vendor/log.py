@@ -1,4 +1,3 @@
-import logging
 import json
 
 def log(req=None, resp=None):
