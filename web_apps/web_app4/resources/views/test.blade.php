@@ -8,5 +8,11 @@
     </head>
     <body>
         <h2>test</h2>
+        <form action="test" method="post">
+            {{ csrf_field() }}
+            <input type="text" name="username"><br>
+            <input type="password" name="password"><br>
+            <button type="submit">Submit</button>
+        </form>
     </body>        
 </html>

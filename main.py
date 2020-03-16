@@ -1,7 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
-from vendor.log import log
+from vendor.log import *
 from vendor.config import get_config
+from vendor.penalize import *
 import pickle
 import pandas as pd
 import random
@@ -26,12 +27,24 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         # print(resp)
         log(self, resp)
         
+
         if self.is_malicious(self.path):
-            self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+            score = penalize(self)
+
+            if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
+                # ?????????????????????????????
+                print("block ip")
+                # block_ip(self)
+            else:
+                self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
+            # if it's time to unblock - remove ip from the file
+            # if is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]):
             self.send_response(resp.status_code)
             self.send_resp_headers(resp)
             self.wfile.write(resp.content)
+            # else:
+            #     self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
 
     def do_POST(self, body=True):
         
@@ -55,12 +68,21 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         
         log(self)
 
-        if is_malicious:        
-            self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+        if is_malicious:
+            score = penalize(self)
+            
+            if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
+                block_ip(self)
+            else:
+                self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
+            # print(is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]))
+            # if is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]):
             self.send_response(resp.status_code)
             self.send_resp_headers(resp)
             self.wfile.write(resp.content)
+            # else:
+            #     self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
 
     def parse_headers(self):
         req_header = {}
@@ -79,7 +101,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         resp_header = resp.headers
         for key in resp_header:
             if key not in ['Server','Content-Encoding', 'Transfer-Encoding', 'content-encoding', 'transfer-encoding', 'content-length', 'Content-Length']:
-                print(resp_header[key])
+                # print(resp_header[key])
                 self.send_header(key, resp_header[key])
         self.send_header('Content-Length', len(resp.content))
         # self.send_header('Server',resp.headers["Server"])

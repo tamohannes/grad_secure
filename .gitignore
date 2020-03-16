@@ -1,5 +1,6 @@
 log/log2.json
 log/log1.log
+log/users_list.json
 vendor/__pycache__/
 sheet.txt
 config.json

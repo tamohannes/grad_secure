@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
 
 class MyController extends Controller
 {
@@ -14,6 +16,11 @@ class MyController extends Controller
      */
     public function index()
     {
-        return "kayfo";
+        return "some text";
     }
+
+    // public function form(Request $request)
+    // {
+    //     var_dump($request);
+    // }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,10 @@ Route::get('/', function () {
 });
 
 
-Route::get('test', function () {
+Route::get('/test', function () {
     return view('test');
+});
+
+Route::post('/test', function (Request $request) {
+    return($request->username." ". $request->password);
 });
