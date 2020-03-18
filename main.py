@@ -22,9 +22,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
         
-        # print(req_header)
         resp = requests.get(url, headers=req_header, verify=False)
-        # print(resp)
         log(self, resp)
         
 
@@ -32,19 +30,17 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             score = penalize(self)
 
             if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
-                # ?????????????????????????????
-                print("block ip")
-                # block_ip(self)
+                block_ip(self)
+                self.send_error(400,message="Ok, that's enough, you are in the Black list")
             else:
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
-            # if it's time to unblock - remove ip from the file
-            # if is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]):
-            self.send_response(resp.status_code)
-            self.send_resp_headers(resp)
-            self.wfile.write(resp.content)
-            # else:
-            #     self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+            if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
+                self.send_response(resp.status_code)
+                self.send_resp_headers(resp)
+                self.wfile.write(resp.content)
+            else:
+                self.send_error(400,message="You'r still in the Black list")
 
     def do_POST(self, body=True):
         
@@ -65,24 +61,23 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
 
         resp = requests.post(url, data=content_dict, headers=req_header, verify=False)
-        
         log(self)
 
         if is_malicious:
             score = penalize(self)
             
-            if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
+            if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
                 block_ip(self)
+                self.send_error(400,message="Ok, that's enough, you are in the Black list")
             else:
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
-            # print(is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]))
-            # if is_unblocking(self, configs["score_restrictions"]["days_to_ublock"]):
-            self.send_response(resp.status_code)
-            self.send_resp_headers(resp)
-            self.wfile.write(resp.content)
-            # else:
-            #     self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+            if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
+                self.send_response(resp.status_code)
+                self.send_resp_headers(resp)
+                self.wfile.write(resp.content)
+            else:
+                self.send_error(400,message="You'r still in the Black list")
 
     def parse_headers(self):
         req_header = {}

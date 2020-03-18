@@ -18,6 +18,17 @@ def log(req=None, resp=None):
 
         log_data['resp']['status_code'] = resp.status_code
 
-    with open(file_path, "a") as write_file:
-        json.dump(log_data, write_file)
-        write_file.write(",\n")
+    with open(file_path) as write_file:
+        data = json.load(write_file)
+        temp = data["log_records"]
+        temp.append(log_data)
+    write_json(data)
+
+    # with open(file_path, "a") as write_file:
+    #     json.dump(log_data, write_file)
+    #     write_file.write(",\n")
+
+
+def write_json(data, filename=file_path):
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
