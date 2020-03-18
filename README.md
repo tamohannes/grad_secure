@@ -1,4 +1,4 @@
-# AI based WAF (Web application Firewall) - grad_secure
+# AI based WAF (Web application Firewall) - GradSecure
 This project is commited to the idea of providing security for web developers, by preventing from SQL injections and XSS attacks.
 
 The system uses AI based ML model called RandomForest, with 2Gram CountVectorizer, sklearn models are used to make the overall processe possible. You can also find out the datasets on /vendor/discriminator/data directory. 
