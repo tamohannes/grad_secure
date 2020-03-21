@@ -23,24 +23,24 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
         
         resp = requests.get(url, headers=req_header, verify=False)
-        log(self, resp)
+        # log(self, resp)
         
 
-        if self.is_malicious(self.path):
-            score = penalize(self)
+        # if self.is_malicious(self.path):
+            # score = penalize(self)
 
-            if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
-                block_ip(self)
-                self.send_error(400,message="Ok, that's enough, you are in the Black list")
-            else:
-                self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
-        else:
-            if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                self.send_response(resp.status_code)
-                self.send_resp_headers(resp)
-                self.wfile.write(resp.content)
-            else:
-                self.send_error(400,message="You'r still in the Black list")
+            # if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_clitent_score_max"]):
+                # block_ip(self)
+                # self.send_error(400,message="Ok, that's enough, you are in the Black list")
+            # else:
+                # self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
+        # else:
+            # if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
+        self.send_response(resp.status_code)
+        self.send_resp_headers(resp)
+        self.wfile.write(resp.content)
+            # else:
+                # self.send_error(400,message="You'r still in the Black list")
 
     def do_POST(self, body=True):
         
@@ -164,3 +164,24 @@ if __name__ == '__main__':
     httpd = HTTPServer(server_address, ProxyHTTPRequestHandler)
     print('http server is running')
     httpd.serve_forever()
+
+# sudo a2ensite webappfive.conf
+
+
+# ProxyPreserveHost On
+# #ProxyMatch ^/prevent !
+# ProxyPass / http://127.0.0.1:8085/
+# ProxyPassReverse / http://127.0.0.1:8085/
+
+
+# Listen 9004
+
+# <VirtualHost *:9004>
+
+# 	ServerAdmin webmaster@localhost
+# 	DocumentRoot /var/www/grad_secure/web_apps/web_app5
+
+# 	ErrorLog ${APACHE_LOG_DIR}/error.log
+# 	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+# </VirtualHost>
