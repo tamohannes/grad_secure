@@ -29,21 +29,29 @@ Bellow are configurations and setup for details
   }
 3. Open your web provider service configurations and configure it as required bellow:
    3.1 For Apache2 open, /etc/apache2/000-default.conf , it should be hosting :80 port (if not make sure it does), copy and paste the following lines before </VirtualHost> closing tag, where xxxx is the port on which grad_secure should be running (use the same port you put on step 2)
+   
         ProxyPreserveHost On
         ProxyPass / http://127.0.0.1:xxxx/
         ProxyPassReverse / http://127.0.0.1:xxxx/
+        
    for our example the following should be used
+   
         ProxyPreserveHost On
         ProxyPass / http://127.0.0.1:8055/
         ProxyPassReverse / http://127.0.0.1:8055/
+        
    3.2 For Nginx open, /etc/nginx/sites-available/default , it should be hosting :80 port (if not make sure it does), copy and paste the following lines before "server" s closing currly braces, where xxxx is the port on which grad_secure should be running (use the same port you put on step 2)
+   
         location / {
             proxy_pass http://localhost:xxxx/;
         }
+        
    for our example the following should be used
+   
         location / {
             proxy_pass http://localhost:8055/;
         }
+        
         
 4. Run grad_secure, by opening terminal in the corresponding location and typing "python3 main.py"
 5. Run your WebApp on the port you specified on the config.json file
