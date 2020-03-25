@@ -15,18 +15,29 @@ Bellow are configurations and setup for details
 
 1. Download the directory (or clone it) and unzip it anywhere you want, best possible directory can be /var/www/grad_secure
 2. Open grad_secure/config.json and set your configurarions: gradsecurity - where the WAF should be running, webapp - where your web application is running, for example 
-    {
+
+
+
+{
     "gradsecurity": {
         "protocol": "http",
         "host": "127.0.0.1",
-        "port": "8055"
+        "port": "8085"
     },
     "webapp": {
         "protocol": "http",
         "host": "127.0.0.1",
-        "port": "8060"
+        "port": "9090"
+    },
+    "score_restrictions": {
+        "gray_client_score_max": 3,
+        "black_client_score_max": 5,
+        "days_to_unblock": 20
     }
-  }
+}
+
+
+
 3. Open your web provider service configurations and configure it as required bellow:
    3.1 For Apache2 open, /etc/apache2/000-default.conf , it should be hosting :80 port (if not make sure it does), copy and paste the following lines before </VirtualHost> closing tag, where xxxx is the port on which grad_secure should be running (use the same port you put on step 2)
    
