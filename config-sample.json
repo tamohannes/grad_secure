@@ -2,11 +2,16 @@
     "gradsecurity": {
         "protocol": "http",
         "host": "127.0.0.1",
-        "port": ""
+        "port": "8085"
     },
     "webapp": {
         "protocol": "http",
         "host": "127.0.0.1",
-        "port": ""
+        "port": "9090"
+    },
+    "score_restrictions": {
+        "gray_client_score_max": 3,
+        "black_client_score_max": 5,
+        "days_to_unblock": 20
     }
 }

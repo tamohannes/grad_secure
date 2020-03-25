@@ -164,3 +164,12 @@ if __name__ == '__main__':
     httpd = HTTPServer(server_address, ProxyHTTPRequestHandler)
     print('http server is running')
     httpd.serve_forever()
+
+
+
+
+
+
+
+# sudo a2enmod proxy
+# sudo a2enmod proxy_http
