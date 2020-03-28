@@ -22,17 +22,22 @@
         <input type="radio" name="gender" value="male">Male
         <input type="radio" name="gender" value="other">Other
         <br>
+            <legend>What is Your Favorite Pet?</legend>
+            <input type="checkbox" name="favorite_pet[]" value="Cats">Cats<br>
+            <input type="checkbox" name="favorite_pet[]" value="Dogs">Dogs<br>
+            <input type="checkbox" name="favorite_pet[]" value="Birds">Birds<br>
+        <br>
         <input type="submit" value="Submit">
     </form>
 
     <br><br><br>
     <button id="elem">
-    click me
+        test of jquery
     </button>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
     <script>
-        $("#elem").click(()=>{
+        $("#elem").click(() => {
             console.log("test in jquery");
         })
         console.log("this is my js file");
@@ -44,23 +49,28 @@
 <?php
 
 if (!empty($_POST)) {
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $website = $_POST["website"];
-    $comment = $_POST["comment"];
-    $gender = $_POST["gender"];
+    echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";
 
-    echo "<br>";
-    echo "<br>";
-    echo $name;
-    echo "<br>";
-    echo $email;
-    echo "<br>";
-    echo $website;
-    echo "<br>";
-    echo $comment;
-    echo "<br>";
-    echo $gender;
+
+    // $name = $_POST["name"];
+    // $email = $_POST["email"];
+    // $website = $_POST["website"];
+    // $comment = $_POST["comment"];
+    // $gender = $_POST["gender"];
+
+    // echo "<br>";
+    // echo "<br>";
+    // echo $name;
+    // echo "<br>";
+    // echo $email;
+    // echo "<br>";
+    // echo $website;
+    // echo "<br>";
+    // echo $comment;
+    // echo "<br>";
+    // echo $gender;
 }
 
 ?>

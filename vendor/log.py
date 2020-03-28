@@ -1,8 +1,8 @@
 import json
 
-file_path = "./log/log2.json"
+file_path = "./log/log.json"
 
-def log(req=None, resp=None):
+def log(req=None, resp=None, req_params=None):
 
     log_data = {'req': {}, 'resp': {}}
 
@@ -17,6 +17,12 @@ def log(req=None, resp=None):
             log_data['resp'][resp_param] = resp.headers[resp_param]
 
         log_data['resp']['status_code'] = resp.status_code
+
+    if req_params:
+        print("\n\n\n\n\n\n")
+        print(req_params)
+        log_data['req']['params'] = req_params
+        print("\n\n\n\n\n\n")
 
     with open(file_path) as write_file:
         data = json.load(write_file)
