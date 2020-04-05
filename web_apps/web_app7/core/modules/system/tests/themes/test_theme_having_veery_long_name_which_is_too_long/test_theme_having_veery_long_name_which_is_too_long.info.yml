@@ -1,0 +1,10 @@
+type: theme
+base theme: stable
+core: 8.x
+name: 'Test theme with a too long name'
+# version: VERSION
+
+# Information added by Drupal.org packaging script on 2020-03-18
+version: '8.8.4'
+project: 'drupal'
+datestamp: 1584560599

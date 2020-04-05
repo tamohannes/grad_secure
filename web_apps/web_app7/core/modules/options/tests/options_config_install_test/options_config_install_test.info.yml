@@ -1,0 +1,14 @@
+name: 'Options config install test'
+type: module
+description: 'Support module for the Options module tests.'
+core: 8.x
+package: Testing
+# version: VERSION
+dependencies:
+  - drupal:node
+  - drupal:options
+
+# Information added by Drupal.org packaging script on 2020-03-18
+version: '8.8.4'
+project: 'drupal'
+datestamp: 1584560599
