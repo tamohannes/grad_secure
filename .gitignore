@@ -3,3 +3,4 @@ log/users_list.json
 vendor/__pycache__/
 sheet.txt
 config.json
+.vscode/
