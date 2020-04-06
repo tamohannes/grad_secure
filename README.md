@@ -71,5 +71,13 @@ You can also find some test(dummy) webapps stored in /web_apps directory, there 
   
   systemctl restart apache2
   ```
-5. Run grad_secure, by opening terminal in the corresponding location and typing "python3 main.py"
-6. Run your WebApp on the port you specified on the config.json file
+5. Run the following commands to install python3 requirements
+  ```
+  sudo chmod +x requirements.txt
+  ./requirements.txt
+  ```
+6. Run grad_secure, by opening terminal in the corresponding location and typing
+  ```
+  sudo python3 main.py
+  ```
+7. Run your WebApp on the port you specified on the config.json file
