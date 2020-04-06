@@ -14,81 +14,54 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self, body=True):
         
         self.load_model()
-        print("do_GET 1")
         is_malicious = self.is_malicious(self.path)
-        print("do_GET 2")
         req_header = self.headers
-        print("do_GET 3")
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
         resp = None
-        print("do_GET 4")
         if is_malicious:
-            print("do_GET 5")
             score = penalize(self)
-            print("do_GET 6")
             if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                print("do_GET 7")
                 block_ip(self)
-                print("do_GET 8")
                 self.send_error(400,message="Ok, that's enough, you are in the Black list")
             else:
-                print("do_GET 9")
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
-            print("do_GET 10")
             if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                print("do_GET 11")
                 resp = requests.get(url, headers=req_header, verify=False)
                 self.send_response(resp.status_code)
                 self.send_resp_headers(resp)
                 self.wfile.write(resp.content)
             else:
-                print("do_GET 12")
                 self.send_error(400,message="You'r still in the Black list")
         
-        print("do_GET 13")
         log(self, resp, is_malicious=is_malicious)
 
     def do_POST(self, body=True):
         
         self.load_model()
-        print("do_POST 1")
         content_length = int(self.headers['Content-Length'])
         content = self.rfile.read(content_length)
         content_parsed = urllib.parse.parse_qs(content)
-        print("do_POST 2")
         content_dict, is_malicious = self.parse_content(content_parsed)
-        print("do_POST 3")
         req_header = self.headers
-        print("do_POST 4")
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
         resp = None
-        print("do_POST 5")
         if is_malicious:
-            print("do_POST 6")
             score = penalize(self)
-            print("do_POST 7")
             if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                print("do_POST 8")
                 block_ip(self)
-                print("do_POST 9")
                 self.send_error(400,message="Ok, that's enough, you are in the Black list")
             else:
-                print("do_POST 10")
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
-            print("do_POST 11")
             if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                print("do_POST 12")
                 resp = requests.post(url, data=content_dict, headers=req_header, verify=False)       
                 self.send_response(resp.status_code)
                 self.send_resp_headers(resp)
                 self.wfile.write(resp.content)
             else:
-                print("do_POST 13")
                 self.send_error(400,message="You are in the Black list")
 
-        print("do_POST 14")
         log(self,resp,content_dict,is_malicious)
 
     def parse_headers(self):
@@ -183,5 +156,4 @@ if __name__ == '__main__':
 
     server_address = (configs["gradsecurity"]["host"], int(configs["gradsecurity"]["port"]) )
     httpd = HTTPServer(server_address, ProxyHTTPRequestHandler)
-    print('http server is running')
     httpd.serve_forever()
