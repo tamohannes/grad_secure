@@ -9,8 +9,8 @@ You can also find some test(dummy) webapps stored in /web_apps directory, there 
 
 >  OS: Linux (tested on Deb and Kali)
   Programming Languages: Python3.6.0 >=
-    Python packages: http.server, requests, pickle, pandas, json
-  WebApp: Any webapp writen in PHP, NodeJS, Python etc. 
+    Python packages: http.server, requests, pickle, pandas, json, sklearn
+  WebApp: Any webapp writen in PHP, NodeJS, Python, Ruby etc. 
 
 ## Configurations and setup for details
 
