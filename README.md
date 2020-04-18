@@ -38,10 +38,12 @@ You can also find some test(dummy) webapps stored in /web_apps directory, there 
 ```
 
 3. Open your web provider service configurations and configure it as required bellow:
-   3.1 For Apache2 open, /etc/apache2/000-default.conf , it should be hosting :80 port (if not make sure it does), copy and paste the following lines before </VirtualHost> closing tag, where xxxx is the port on which grad_secure should be running (use the same port you put on step 2)
+   3.1 For Apache2 open, /etc/apache2/000-default.conf , it should be hosting :80 port (if not make sure it does), copy and paste the following lines before </VirtualHost> closing tag, where xxxx is the port on which grad_secure should be running (use the same port you put on step 2), the second line is used to prevent reverse proxy on the metnioned directory
    
    ```
         ProxyPreserveHost On
+        
+        ProxyPass /xxxx/ !
         ProxyPass / http://127.0.0.1:xxxx/
         ProxyPassReverse / http://127.0.0.1:xxxx/
    ```
@@ -49,6 +51,8 @@ You can also find some test(dummy) webapps stored in /web_apps directory, there 
    for our example the following should be used
    ```
         ProxyPreserveHost On
+        
+        ProxyPass /phpmyadmin/ !
         ProxyPass / http://127.0.0.1:8055/
         ProxyPassReverse / http://127.0.0.1:8055/
    ```      
