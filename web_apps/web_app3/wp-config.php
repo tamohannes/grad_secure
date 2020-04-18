@@ -23,7 +23,7 @@
 define( 'DB_NAME', 'web_app_3' );
 
 /** MySQL database username */
-define( 'DB_USER', 'user' );
+define( 'DB_USER', 'root' );
 
 /** MySQL database password */
 define( 'DB_PASSWORD', 'tmyn1881' );

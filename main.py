@@ -15,7 +15,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         
         self.load_model()
         is_malicious = self.is_malicious(self.path)
-        req_header = self.headers
+        # req_header = self.headers
         url = '{}://{}:{}{}'.format(configs["webapp"]["protocol"], configs["webapp"]["host"], configs["webapp"]["port"], self.path)
         resp = None
         if is_malicious:
@@ -27,7 +27,8 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
             if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                resp = requests.get(url, headers=req_header, verify=False)
+                resp = requests.get(url, verify=False)
+                # headers=req_header
                 self.send_response(resp.status_code)
                 self.send_resp_headers(resp)
                 self.wfile.write(resp.content)
