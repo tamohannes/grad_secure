@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 from vendor.log import log
 from vendor.config import get_config
-from vendor.helper import is_blocking, penalize, has_access, block_ip
+from vendor.helper import is_blocking, penalize, has_access
 import pickle
 import pandas as pd
 import random
@@ -21,7 +21,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         if is_malicious:
             score = penalize(self)
             if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                block_ip(self)
+                # block_ip(self)
                 self.send_error(400,message="Ok, that's enough, you are in the Black list")
             else:
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
@@ -50,13 +50,14 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         if is_malicious:
             score = penalize(self)
             if is_blocking(score, configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                block_ip(self)
-                self.send_error(400,message="Ok, that's enough, you are in the Black list")
+                # block_ip(self)
+                self.send_error(400,message="You are in the Black list")
             else:
                 self.send_error(400,message=self.make_fun()+", It seems like an "+self.type_of_attack(self.path))
         else:
             if has_access(self, configs["score_restrictions"]["days_to_unblock"], configs["score_restrictions"]["gray_client_score_max"], configs["score_restrictions"]["black_client_score_max"]):
-                resp = requests.post(url, data=content_dict, headers=req_header, verify=False)       
+                resp = requests.post(url, data=content_dict, verify=False)
+                # headers=req_header  
                 self.send_response(resp.status_code)
                 self.send_resp_headers(resp)
                 self.wfile.write(resp.content)

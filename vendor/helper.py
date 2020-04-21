@@ -8,7 +8,7 @@ GREY_USER = 1
 WHITE_USER = 0
 
 file_path = "./log/users_list.json"
-ipblacklist_path = "/etc/apache2/ipblacklist.conf"
+# ipblacklist_path = "/etc/apache2/ipblacklist.conf"
 
 def load(req):
     with open(file_path) as file_content:
@@ -78,14 +78,14 @@ def get_status(score, grey_score_max, black_score_max):
         return BLACK_USER
 
 
-def block_ip(req):
-    with open(ipblacklist_path, "a") as file_content:
-        file_content.write("\nRequire not ip "+str(req.client_address[0]))
-        print(file_content)
-        reload_service()
+# def block_ip(req):
+#     with open(ipblacklist_path, "a") as file_content:
+#         file_content.write("\nRequire not ip "+str(req.client_address[0]))
+#         print(file_content)
+#         reload_service()
 
-def reload_service():
-    os.system("service apache2 reload")
+# def reload_service():
+#     os.system("service apache2 reload")
 
 def has_access(req, days_to_unblock, grey_score_max, black_score_max):
     ip = req.client_address[0]
@@ -118,27 +118,27 @@ def unblock(blocked_date, days_to_unblock, ip, grey_score_max):
     
 
     if date_diff >= days_to_unblock:
-        with open(ipblacklist_path) as file_content:
-            ipblacklist_content = file_content.read()
+        # with open(ipblacklist_path) as file_content:
+        #     ipblacklist_content = file_content.read()
 
-        ipblacklist_content = ipblacklist_content.split("\n")
-        for i,ip_record in enumerate(ipblacklist_content):
-            if ip_record.find(ip) != -1:
-                ipblacklist_content.pop(i)
-                with open(ipblacklist_path, "w") as file_content:
-                    file_content.write(list_to_str(ipblacklist_content, "\n"))
+        # ipblacklist_content = ipblacklist_content.split("\n")
+        # for i,ip_record in enumerate(ipblacklist_content):
+        #     if ip_record.find(ip) != -1:
+        #         ipblacklist_content.pop(i)
+        #         with open(ipblacklist_path, "w") as file_content:
+        #             file_content.write(list_to_str(ipblacklist_content, "\n"))
 
-                reload_service()
-                with open(file_path) as file_content:
-                    data = json.load(file_content)
-                    for rec in data["clients_records"]:
-                        if rec["ip"] == ip:
-                            rec["score"] = grey_score_max
-                            rec["date"] = str(date.today())
-                            break
+        #         reload_service()
+        with open(file_path) as file_content:
+            data = json.load(file_content)
+            for rec in data["clients_records"]:
+                if rec["ip"] == ip:
+                    rec["score"] = grey_score_max
+                    rec["date"] = str(date.today())
+                    break
                     
-                write_json(data)
-                break
+                # write_json(data)
+                # break
                 
     else:
         return False
