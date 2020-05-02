@@ -5,6 +5,10 @@ The system uses AI based ML model called RandomForest, with 2Gram CountVectorize
 However if you are not interested in ML part the trained model is already stored in /vendor/discriminator/finalized_model.sav file you can just load it.
 You can also find some test(dummy) webapps stored in /web_apps directory, there are web apps writen in: Python(Flask), PHP(Vanila, WP, Laravel) ... 
 
+## Overall Schema
+
+![](schema.png)
+
 ## Prerequisite
 
 >  OS: Linux (tested on Deb and Kali)
